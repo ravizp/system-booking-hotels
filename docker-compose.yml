@@ -59,7 +59,7 @@ services:
       - hotel-network
 
   postgres:
-    image: postgres:14
+    image: postgres:latest
     container_name: hotel-db
     environment:
       POSTGRES_USER: postgres

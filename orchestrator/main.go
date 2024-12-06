@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/raviz/system-booking-hotels/orchestrator/config"
-	"github.com/raviz/system-booking-hotels/orchestrator/routes"
+	"orchestrator/config"
+	"orchestrator/routes"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,15 +12,13 @@ import (
 func main() {
 	app := fiber.New()
 
+	// Load environment variables
+	config.LoadEnv()
 
-	// Load env variable
-	config.LoadConfig()
-
-
-	//inisiasi routes
+	// Initialize routes
 	routes.SetupRoutes(app)
 
-	//start server
+	// Start server
 	port := config.GetEnv("PORT", "8080")
 	log.Printf("Orchestrator running on port %s", port)
 	log.Fatal(app.Listen(":" + port))
