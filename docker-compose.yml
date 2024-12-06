@@ -1,0 +1,74 @@
+services:
+  orchestrator:
+    build:
+      context: ./orchestrator
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - hotel-service
+      - booking-service
+    networks:
+      - hotel-network
+
+  user-service:
+    build:
+      context: ./services/user-service
+    ports:
+      - "8081:8081"
+    networks:
+      - hotel-network
+    environment:
+      - DB_HOST=user-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=SystemHotelDB
+
+  hotel-service:
+    build:
+      context: ./services/hotel-service
+    ports:
+      - "8082:8082"
+    networks:
+      - hotel-network
+    environment:
+      - DB_HOST=hotel-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=SystemHotelDB
+
+  booking-service:
+    build:
+      context: ./services/booking-service
+    ports:
+      - "8083:8083"
+    networks:
+      - hotel-network
+    environment:
+      - DB_HOST=booking-db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=SystemHotelDB
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+    ports:
+      - "8084:8084"
+    networks:
+      - hotel-network
+
+  postgres:
+    image: postgres:14
+    container_name: hotel-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: SystemHotelDB
+    ports:
+      - "5432:5432"
+    networks:
+      - hotel-network
+
+networks:
+  hotel-network:
