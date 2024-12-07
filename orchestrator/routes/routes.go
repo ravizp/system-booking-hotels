@@ -12,6 +12,9 @@ func SetupRoutes(app *fiber.App) {
 	})
 
 	app.All("/users/*", handlers.ProxyUserService)
-	// app.All("/hotels/*", handlers.ProxyHotelService)
-	// app.All("/bookings/*", handlers.ProxyBookingService)
+	app.All("/hotels/*", func(c *fiber.Ctx) error {
+		targetURL := "http://hotel-service:8082" + c.OriginalURL()
+		return c.Redirect(targetURL, fiber.StatusTemporaryRedirect)
+	})
+	
 }
