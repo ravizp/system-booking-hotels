@@ -12,6 +12,10 @@ import (
 func main() {
 	app := fiber.New()
 
+	app.Get("/", func(c *fiber.Ctx) error {
+        return c.SendString("Hello, World!")
+    })
+
 	// Load environment variables
 	config.LoadEnv()
 

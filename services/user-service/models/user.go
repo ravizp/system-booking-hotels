@@ -1,7 +1,9 @@
 package models
 
 import (
+	"fmt"
 	"time"
+	"user-service/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -14,18 +16,48 @@ type User struct {
 	Password  string    `json:"password"`
 	Role      string    `json:"role" gorm:"default:'customer'"`
 	CreatedAt time.Time `json:"created_at"`
-	UpadtedAt time.Time `json:"updated_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 var DB *gorm.DB
 
-func init() {
-	var err error
-	dsn := "host=localhost user=postgres password=postgres dbname=SystemHotelDB port=5432 sslmode=disable"
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
+func InitDatabase() {
+	config.LoadEnv() // Load environment variables
+
+	var dbHost, dbPort, dbUser, dbPassword, dbName string
+	if config.GetEnv("USE_LOCAL_DB", "false") == "true" {
+		dbHost = config.GetEnv("DB_HOST_LOCAL", "localhost")
+		dbPort = config.GetEnv("DB_PORT_LOCAL", "5432")
+		dbUser = config.GetEnv("DB_USER_LOCAL", "postgres")
+		dbPassword = config.GetEnv("DB_PASSWORD_LOCAL", "postgres")
+		dbName = config.GetEnv("DB_NAME_LOCAL", "postgres")
+	} else {
+		dbHost = config.GetEnv("DB_HOST", "postgres")
+		dbPort = config.GetEnv("DB_PORT", "5432")
+		dbUser = config.GetEnv("DB_USER", "postgres")
+		dbPassword = config.GetEnv("DB_PASSWORD", "postgres")
+		dbName = config.GetEnv("DB_NAME", "SystemHotelDB")
 	}
 
-	DB.AutoMigrate(&User{})
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		dbHost, dbUser, dbPassword, dbName, dbPort,
+	)
+
+	// Retry connection until database is ready
+	var err error
+	for i := 1; i <= 5; i++ {
+		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			fmt.Println("Database connected!")
+			break
+		}
+		fmt.Printf("Failed to connect to database (%d/5): %s\n", i, err.Error())
+		time.Sleep(5 * time.Second)
+	}
+	
+
+	if err != nil {
+		panic("Failed to connect to database: " + err.Error())
+	}
 }
