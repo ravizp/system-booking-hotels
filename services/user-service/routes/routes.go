@@ -4,6 +4,7 @@ import (
 	"user-service/controllers"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/ravizp/system-booking-hotels/shared/middlewares"
 )
 
 func SetupRoutes(app *fiber.App) {
@@ -11,6 +12,7 @@ func SetupRoutes(app *fiber.App) {
 
 	api.Post("/register", controllers.Register)
 	api.Post("/login", controllers.Login)
-	api.Get("/", controllers.GetAllUsers) // Endpoint untuk mendapatkan seluruh user
-	api.Get("/:id", controllers.GetUserByID) // Endpoint untuk mendapatkan user berdasarkan ID
+
+	api.Get("/", middlewares.AdminOnly, controllers.GetAllUsers)   // Only admin can access
+	api.Get("/:id", middlewares.AdminOnly, controllers.GetUserByID) // Endpoint untuk mendapatkan user berdasarkan ID
 }

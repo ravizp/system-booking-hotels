@@ -59,4 +59,3 @@ services:
 
 networks:
   hotel-network:
-    driver: bridge
