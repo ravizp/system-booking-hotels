@@ -14,5 +14,8 @@ func SetupRoutes(app *fiber.App) {
 	api.Delete("/:id", controllers.DeleteBooking)
 
 	api.Post("/payments/:bookingId", controllers.CreatePayment)
+	api.Get("/payments", controllers.GetAllPayments)
 	api.Post("/refunds", controllers.RefundBooking)
+	api.Get("/refunds", controllers.GetAllRefunds)
+	api.Patch("/refunds/:id", controllers.UpdateRefundStatus)
 }

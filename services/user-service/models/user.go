@@ -44,7 +44,6 @@ func InitDatabase() {
 		dbHost, dbUser, dbPassword, dbName, dbPort,
 	)
 
-	// Retry connection until database is ready
 	var err error
 	for i := 1; i <= 5; i++ {
 		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -55,7 +54,6 @@ func InitDatabase() {
 		fmt.Printf("Failed to connect to database (%d/5): %s\n", i, err.Error())
 		time.Sleep(5 * time.Second)
 	}
-	
 
 	if err != nil {
 		panic("Failed to connect to database: " + err.Error())

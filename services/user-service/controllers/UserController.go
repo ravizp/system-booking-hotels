@@ -57,7 +57,6 @@ func Login(c *fiber.Ctx) error {
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
-	// Verify JWT token
 	userID, err := jwt.ValidateToken(c.Get("Authorization"))
 	if err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
@@ -72,7 +71,6 @@ func GetAllUsers(c *fiber.Ctx) error {
 }
 
 func GetUserByID(c *fiber.Ctx) error {
-	// Verify JWT token
 	userID, err := jwt.ValidateToken(c.Get("Authorization"))
 	if err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
@@ -89,13 +87,10 @@ func GetUserByID(c *fiber.Ctx) error {
 }
 
 func Logout(c *fiber.Ctx) error {
-	// Verify JWT token
 	_, err := jwt.ValidateToken(c.Get("Authorization"))
 	if err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
-	// Dummy implementation
-	// Usually, token management is handled on the frontend or with a blacklist
 	return c.JSON(fiber.Map{"message": "Logout successful"})
 }

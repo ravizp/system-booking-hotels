@@ -10,11 +10,7 @@ import (
 
 func Authentication(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
-	if authHeader == "" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Missing Authorization header",
-		})
-	}
+	log.Printf("Authorization Header: %s", authHeader) // Log header untuk verifikasi
 
 	if len(authHeader) < 7 || authHeader[:7] != "Bearer " {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -25,7 +21,7 @@ func Authentication(c *fiber.Ctx) error {
 	tokenString := authHeader[7:]
 	claims, err := jwt.GetClaims(tokenString)
 	if err != nil {
-		log.Printf("Token validation error: %v", err)
+		log.Printf("Token validation error: %v", err) // Log error jika parsing token gagal
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Invalid token",
 		})
