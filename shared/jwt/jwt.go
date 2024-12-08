@@ -14,7 +14,7 @@ func GenerateToken(userID uint, name string, role string) (string, error) {
 		"userId": userID,
 		"name":   name,
 		"role":   role,
-		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+		"exp":    time.Now().Add(24 * time.Hour).Unix(), // Token valid 24 jam
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -22,12 +22,22 @@ func GenerateToken(userID uint, name string, role string) (string, error) {
 }
 
 func ValidateToken(tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
 		return jwtSecret, nil
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("invalid token")
+	}
+
+	return token, nil
 }
 
 func GetClaims(tokenString string) (jwt.MapClaims, error) {
@@ -37,7 +47,7 @@ func GetClaims(tokenString string) (jwt.MapClaims, error) {
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
+	if !ok {
 		return nil, errors.New("invalid token claims")
 	}
 

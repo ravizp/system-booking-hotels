@@ -2,7 +2,7 @@ package routes
 
 import (
 	"user-service/controllers"
-	// "github.com/ravizp/system-booking-hotels/middlewares"
+	"user-service/middlewares"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -10,12 +10,13 @@ import (
 func SetupRoutes(app *fiber.App) {
 	api := app.Group("/users")
 
-	//public routes
+	// Public routes
 	api.Post("/register", controllers.Register)
 	api.Post("/login", controllers.Login)
 
-	//prorected routes
-	// api.Use(middlewares.Authentication)
-	api.Get("/", controllers.GetAllUsers) // Endpoint untuk mendapatkan seluruh user
+	// Protected routes (require authentication)
+	api.Use(middlewares.Authentication)
+	api.Post("/logout", controllers.Logout)
+	api.Get("/", controllers.GetAllUsers)    // Endpoint untuk mendapatkan seluruh user
 	api.Get("/:id", controllers.GetUserByID) // Endpoint untuk mendapatkan user berdasarkan ID
 }

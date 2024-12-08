@@ -4,10 +4,9 @@ import (
 	"net/http"
 	"user-service/models"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/ravizp/system-booking-hotels/shared/jwt"
 	"github.com/ravizp/system-booking-hotels/shared/utils"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func Register(c *fiber.Ctx) error {
@@ -16,14 +15,14 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
 	}
 
-	// hash password
+	//hash password
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Cannot hash password"})
 	}
 	user.Password = hashedPassword
 
-	//save ke database 
+	//save ke database
 	if err := models.DB.Create(user).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -45,13 +44,11 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	// komparasi password
 	if err := utils.ComparePassword(user.Password, data.Password); err != nil {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
-	// Generate JWT token
-	token, err := jwt.GenerateToken(user.ID, user.Role)
+	token, err := jwt.GenerateToken(user.ID, user.Name, user.Role)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to generate token"})
 	}
@@ -60,15 +57,27 @@ func Login(c *fiber.Ctx) error {
 }
 
 func GetAllUsers(c *fiber.Ctx) error {
+	// Verify JWT token
+	userID, err := jwt.ValidateToken(c.Get("Authorization"))
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
 	var users []models.User
 	if err := models.DB.Find(&users).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to fetch users"})
 	}
 
-	return c.JSON(fiber.Map{"data": users})
+	return c.JSON(fiber.Map{"data": users, "user_id": userID})
 }
 
 func GetUserByID(c *fiber.Ctx) error {
+	// Verify JWT token
+	userID, err := jwt.ValidateToken(c.Get("Authorization"))
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
 	id := c.Params("id")
 
 	var user models.User
@@ -76,5 +85,17 @@ func GetUserByID(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
-	return c.JSON(fiber.Map{"data": user})
+	return c.JSON(fiber.Map{"data": user, "user_id": userID})
+}
+
+func Logout(c *fiber.Ctx) error {
+	// Verify JWT token
+	_, err := jwt.ValidateToken(c.Get("Authorization"))
+	if err != nil {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+
+	// Dummy implementation
+	// Usually, token management is handled on the frontend or with a blacklist
+	return c.JSON(fiber.Map{"message": "Logout successful"})
 }
