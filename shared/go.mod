@@ -1,4 +1,4 @@
-module shared
+module github.com/ravizp/system-booking-hotels/shared
 
 go 1.23.3
 
