@@ -17,15 +17,29 @@ func ProxyUserService(c *fiber.Ctx) error {
     targetURL := userServiceURL + c.OriginalURL()
     log.Printf("Redirecting to: %s", targetURL)
 
-    // Menggunakan middleware proxy untuk meneruskan semua permintaan
     return proxy.Do(c, targetURL)
 }
 
+func ProxyHotelService(c *fiber.Ctx) error {
+    hotelServiceURL := os.Getenv("HOTEL_SERVICE_URL")
+    if hotelServiceURL == "" {
+        hotelServiceURL = "http://hotel-service:8082"
+    }
 
-// func ProxyHotelService(c *fiber.Ctx) error {
-// 	return c.Redirect("http://hotel-service:8082"+c.OriginalURL(), fiber.StatusTemporaryRedirect)
-// }
+    targetURL := hotelServiceURL + c.OriginalURL()
+    log.Printf("Redirecting to: %s", targetURL)
 
-// func ProxyBookingService(c *fiber.Ctx) error {
-// 	return c.Redirect("http://booking-service:8083"+c.OriginalURL(), fiber.StatusTemporaryRedirect)
-// }
+    return proxy.Do(c, targetURL)
+}
+
+func ProxyBookingService(c *fiber.Ctx) error {
+    bookingServiceURL := os.Getenv("BOOKING_SERVICE_URL")
+    if bookingServiceURL == "" {
+        bookingServiceURL = "http://booking-service:8083"
+    }
+
+    targetURL := bookingServiceURL + c.OriginalURL()
+    log.Printf("Redirecting to: %s", targetURL)
+
+    return proxy.Do(c, targetURL)
+}
