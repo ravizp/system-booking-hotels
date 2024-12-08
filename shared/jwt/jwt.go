@@ -7,40 +7,38 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secretKey = []byte("your-secret-key")
+var jwtSecret = []byte("supersecretkey")
 
-type CustomClaims struct {
-	UserID uint   `json:"userId"`
-	Name   string `json:"name"`
-	Role   string `json:"role"`
-	jwt.RegisteredClaims
-}
-
-func GenerateToken(userID uint, name, role string) (string, error) {
-	claims := CustomClaims{
-		UserID: userID,
-		Name:   name,
-		Role:   role,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-			Issuer:    "SystemHotel",
-		},
+func GenerateToken(userID uint, name string, role string) (string, error) {
+	claims := jwt.MapClaims{
+		"userId": userID,
+		"name":   name,
+		"role":   role,
+		"exp":    time.Now().Add(time.Hour * 24).Unix(),
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(secretKey)
+	return token.SignedString(jwtSecret)
 }
 
-func ParseToken(tokenString string) (*CustomClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return secretKey, nil
+func ValidateToken(tokenString string) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return jwtSecret, nil
 	})
+}
+
+func GetClaims(tokenString string) (jwt.MapClaims, error) {
+	token, err := ValidateToken(tokenString)
 	if err != nil {
 		return nil, err
 	}
 
-	claims, ok := token.Claims.(*CustomClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return nil, errors.New("invalid token")
+		return nil, errors.New("invalid token claims")
 	}
 
 	return claims, nil
