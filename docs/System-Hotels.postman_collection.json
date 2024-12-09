@@ -1,8 +1,8 @@
 {
 	"info": {
-		"_postman_id": "a69530ca-1c3b-4313-a62e-e8855231e8a9",
+		"_postman_id": "90b88d87-be06-4e21-a14d-e36c9a790671",
 		"name": "System-Hotels",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "38388185"
 	},
 	"item": [
@@ -11,17 +11,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/health",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"health"
-					]
-				}
+				"url": "http://localhost:8080/health",
+				"description": "This endpoint sends an HTTP GET request to retrieve the health status of the server.\n\n### Response\n\nRespon dari permintaan ini berupa skema JSON yang merepresentasikan status kesehatan server.\n\nExample response:\n\n``` json\n{\n    \"status\": \"Orchestrator running!\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -45,18 +36,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8081/users/register",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"users",
-						"register"
-					]
-				}
+				"url": "http://localhost:8081/users/register",
+				"description": "# User Registration\n\nThis endpoint allows users to register in the system by providing their name, email, and password.\n\n## Request Body\n\n- `name` (string): The name of the user.\n    \n- `email` (string): The email address of the user.\n    \n- `password` (string): The password for the user's account.\n    \n\n## Response\n\nThe response will be a JSON object with the following properties:\n\n- `userId` (string): A unique identifier for the registered user.\n    \n- `message` (string): A message confirming successful registration.\n    \n\nExample response:\n\n``` json\n{\n    \"userId\": \"abcd1234\",\n    \"message\": \"User registered successfully\"\n}\n\n ```\n\n_Response (201 - OK)_\n\nRespon without specifik role\n\n``` json\n{\n  \"id\": 1,\n  \"name\": \"user1\",\n  \"email\": \"user1@mail.com\",\n  \"password\": \"$2a$10$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9daPS\",\n  \"role\": \"customer\",\n  \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n  \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n}\n\n ```\n\nResponse specifik role admin\n\n``` json\n{\n  \"id\": 2,\n  \"name\": \"user2\",\n  \"email\": \"user2@mail.com\",\n  \"password\": \"$2a$11$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9dsaj\",\n  \"role\": \"admin\",\n  \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n  \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"error\": \"ERROR: duplicate key value violates unique constraint \\\"uni_users_email\\\" (SQLSTATE 23505)\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -86,33 +67,54 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/users/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						"login"
-					]
-				}
+				"url": "http://localhost:8080/users/login",
+				"description": "### User Login\n\nThis endpoint is used to authenticate a user by providing their email and password.\nRequest Body\n\n#### Request Body\n\n- email (string, required): The email address of the user.\n    \n- password (string, required): The password of the user.\n    \n\n#### Response\n\nThe response will be a JSON object with the following properties:\n\n- message (string): message login success.\n    \n- token (string): The authentication token for the user.\n    \n\n_Response (200 - OK)_\n\n```json\n{\n  \"message\": \"Login successful\",\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzM4MTcyMTksIm5hbWUiOiJ1c2VyMSIsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6MX0.NqquECyjQwOe8kJQoEZTe_5DlSQL9yYfn8BmfGk4mx0\"\n}\n```\n\n_Response (404 - Not Found)_\n\n```json\n{\n  \"error\": \"User not found\"\n}\n```\n\n_Response (401 - Unauthorized)_\n\n```json\n{\n  \"error\": \"Invalid credentials\"\n}\n```"
 			},
 			"response": []
 		},
 		{
 			"name": "user-service Find All Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Test to check the response for a specific condition\r",
+							"pm.test(\"Response contains valid user details\", function () {\r",
+							"    var responseData = pm.response.json();\r",
+							"\r",
+							"    // Check if the response is an object\r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"\r",
+							"    // Check if the response has the required properties\r",
+							"    pm.expect(responseData).to.have.property('id');\r",
+							"    pm.expect(responseData).to.have.property('name');\r",
+							"    pm.expect(responseData).to.have.property('email');\r",
+							"    pm.expect(responseData).to.have.property('role');\r",
+							"    pm.expect(responseData).to.have.property('created_at');\r",
+							"    pm.expect(responseData).to.have.property('updated_at');\r",
+							"\r",
+							"    // Check the data types of the properties\r",
+							"    pm.expect(responseData.id).to.be.a('number');\r",
+							"    pm.expect(responseData.name).to.be.a('string');\r",
+							"    pm.expect(responseData.email).to.be.a('string');\r",
+							"    pm.expect(responseData.role).to.be.a('string');\r",
+							"    pm.expect(responseData.created_at).to.be.a('string');\r",
+							"    pm.expect(responseData.updated_at).to.be.a('string');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{{{token}}}}",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "{{{{token}}}}"
+					}
 				},
 				"method": "GET",
 				"header": [
@@ -122,18 +124,8 @@
 						"type": "text"
 					}
 				],
-				"url": {
-					"raw": "http://localhost:8080/users/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						""
-					]
-				}
+				"url": "http://localhost:8080/users/",
+				"description": "This endpoint makes an HTTP GET request to retrieve all user data. The response of this request is documented as a JSON schema below:\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"user1\",\n    \"email\": \"user1@mail.com\",\n    \"password\": \"$2a$10$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9daPS\",\n    \"role\": \"customer\",\n    \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n    \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"user2\",\n    \"email\": \"user2@mail.com\",\n    \"password\": \"$2a$10$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9daPS\",\n    \"role\": \"customer\",\n    \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n    \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n  }\n]\n\n ```"
 			},
 			"response": []
 		},
@@ -142,13 +134,9 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{{{token}}}}",
-							"type": "string"
-						}
-					]
+					"bearer": {
+						"token": "{{{{token}}}}"
+					}
 				},
 				"method": "GET",
 				"header": [
@@ -176,7 +164,8 @@
 							"disabled": true
 						}
 					]
-				}
+				},
+				"description": "# Get User Details\n\nThis endpoint retrieves the details of a specific user by their ID.\n\n## Response\n\nUpon a successful request, the server will respond with the following details about the user:\n\n- `id`: The unique identifier of the user.\n    \n- `name`: The name of the user.\n    \n- `email`: The email address of the user.\n    \n- `created_at`: The timestamp when the user was created.\n    \n\nIf the user ID is not found, the server will respond with an appropriate error message.\n\n- headers:\n    \n\n``` json\n{\n  \"Authorization\": \"Bearer <access_token>\"\n}\n\n ```\n\n_Response (200 - OK)_\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"name\": \"user1\",\n    \"email\": \"user1@mail.com\",\n    \"password\": \"$2a$10$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9daPS\",\n    \"role\": \"customer\",\n    \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n    \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"user2\",\n    \"email\": \"user2@mail.com\",\n    \"password\": \"$2a$10$Kh5w9h.Fy0fJow3.JcrHg.xUvU/TDIFn5qqeeLHqIFAKH4Fw9daPS\",\n    \"role\": \"customer\",\n    \"created_at\": \"2024-12-09T07:45:57.571481782Z\",\n    \"updated_at\": \"2024-12-09T07:45:57.571481782Z\"\n  }\n]\n\n ```\n\n_Response (401 - Unauthorized)_\n\n``` json\n{\n  \"message\": \"Unauthorized\"\n}\nOR\n{\n  \"message\": \"Invalid Token\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -194,18 +183,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/hotels/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"hotels",
-						""
-					]
-				}
+				"url": "http://localhost:8080/hotels/",
+				"description": "### Hotel Creation\n\nThis endpoint allows the creation of a new hotel.\n\n#### Request Body\n\n- Type: JSON\n    \n    - `name`: (string) The name of the hotel.\n        \n    - `address`: (string) The address of the hotel.\n        \n    - `description`: (string) A brief description of the hotel.\n        \n\n#### Response (200 - OK)\n\nThe response is in JSON format and represents the schema for the created hotel object.\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"id\": 4,\n  \"name\": \"Hotel Liliput\",\n  \"address\": \"Indonesia, BSD\",\n  \"description\": \"Tempat yang menyegarkan\",\n  \"created_at\": \"2024-12-09T08:06:39.874473812Z\",\n  \"updated_at\": \"2024-12-09T08:06:39.874473812Z\",\n  \"rooms\": null\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"message\": \"Invalid input\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -223,17 +202,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8082/rooms",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8082",
-					"path": [
-						"rooms"
-					]
-				}
+				"url": "http://localhost:8082/rooms",
+				"description": "### Create Room\n\nThis endpoint allows the client to create a new room in the hotel.\n\n#### Request Body\n\n- `hotelId` (number) - The ID of the hotel to which the room belongs.\n    \n- `number` (string) - The room number or identifier.\n    \n- `type` (string) - The type of the room (e.g., Single, Double, Suite).\n    \n- `price` (number) - The price of the room.\n    \n\n#### Response\n\nThe response is a JSON object with the following schema:\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"id\": 6,\n  \"hotelId\": 4,\n  \"number\": \"A 102\",\n  \"type\": \"Double\",\n  \"price\": 800000,\n  \"created_at\": \"2024-12-09T08:10:46.338696147Z\",\n  \"updated_at\": \"2024-12-09T08:10:46.338696147Z\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"message\": \"Invalid input\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -242,18 +212,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/hotels/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"hotels",
-						""
-					]
-				}
+				"url": "http://localhost:8080/hotels/",
+				"description": "### GET /hotels/\n\nThis endpoint retrieves a list of hotels.\n\n#### Request\n\nNo request body is required for this request.\n\n#### Response\n\nThe response will be a JSON array containing hotel objects with the following properties:\n\n- `id` (number): The unique identifier of the hotel.\n    \n- `name` (string): The name of the hotel.\n    \n- `address` (string): The address of the hotel.\n    \n- `description` (string): A description of the hotel.\n    \n- `created_at` (string): The timestamp of when the hotel was created.\n    \n- `updated_at` (string): The timestamp of when the hotel was last updated.\n    \n- `rooms` (array): An array of room objects within the hotel, each with the following properties:\n    \n    - `id` (number): The unique identifier of the room.\n        \n    - `hotelId` (number): The unique identifier of the hotel to which the room belongs.\n        \n    - `number` (string): The room number.\n        \n    - `type` (string): The type of the room.\n        \n    - `price` (number): The price of the room.\n        \n    - `created_at` (string): The timestamp of when the room was created.\n        \n    - `updated_at` (string): The timestamp of when the room was last updated.\n        \n\n``` json\n[\n    {\n        \"id\": 1,\n        \"name\": \"Hotel Liliput\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-08T10:09:39.939054Z\",\n        \"updated_at\": \"2024-12-08T10:09:39.939054Z\",\n        \"rooms\": [\n            {\n                \"id\": 2,\n                \"hotelId\": 1,\n                \"number\": \"A 102\",\n                \"type\": \"Double\",\n                \"price\": 800000,\n                \"created_at\": \"2024-12-08T10:10:03.17437Z\",\n                \"updated_at\": \"2024-12-08T10:10:03.17437Z\"\n            },\n            {\n                \"id\": 3,\n                \"hotelId\": 1,\n                \"number\": \"A 102\",\n                \"type\": \"Double\",\n                \"price\": 800000,\n                \"created_at\": \"2024-12-08T10:10:05.337639Z\",\n                \"updated_at\": \"2024-12-08T10:10:05.337639Z\"\n            },\n            {\n                \"id\": 7,\n                \"hotelId\": 1,\n                \"number\": \"A 102\",\n                \"type\": \"Double\",\n                \"price\": 800000,\n                \"created_at\": \"2024-12-09T10:21:43.109449Z\",\n                \"updated_at\": \"2024-12-09T10:21:43.109449Z\"\n            }\n        ]\n    },\n    {\n        \"id\": 2,\n        \"name\": \"Hotel Liliput\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-08T15:06:02.284132Z\",\n        \"updated_at\": \"2024-12-08T15:06:02.284132Z\",\n        \"rooms\": []\n    },\n    {\n        \"id\": 3,\n        \"name\": \"Hotel Liliput\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-09T06:49:20.151517Z\",\n        \"updated_at\": \"2024-12-09T06:49:20.151517Z\",\n        \"rooms\": []\n    },\n    {\n        \"id\": 4,\n        \"name\": \"Hotel Liliput\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-09T08:06:39.874473Z\",\n        \"updated_at\": \"2024-12-09T08:06:39.874473Z\",\n        \"rooms\": [\n            {\n                \"id\": 5,\n                \"hotelId\": 4,\n                \"number\": \"A 102\",\n                \"type\": \"Double\",\n                \"price\": 800000,\n                \"created_at\": \"2024-12-09T08:08:43.511474Z\",\n                \"updated_at\": \"2024-12-09T08:08:43.511474Z\"\n            },\n            {\n                \"id\": 6,\n                \"hotelId\": 4,\n                \"number\": \"A 102\",\n                \"type\": \"Double\",\n                \"price\": 800000,\n                \"created_at\": \"2024-12-09T08:10:46.338696Z\",\n                \"updated_at\": \"2024-12-09T08:10:46.338696Z\"\n            }\n        ]\n    },\n    {\n        \"id\": 5,\n        \"name\": \"\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-09T08:07:42.091101Z\",\n        \"updated_at\": \"2024-12-09T08:07:42.091101Z\",\n        \"rooms\": []\n    },\n    {\n        \"id\": 6,\n        \"name\": \"\",\n        \"address\": \"\",\n        \"description\": \"\",\n        \"created_at\": \"2024-12-09T08:07:54.834478Z\",\n        \"updated_at\": \"2024-12-09T08:07:54.834478Z\",\n        \"rooms\": []\n    },\n    {\n        \"id\": 7,\n        \"name\": \"Hotel Liliput\",\n        \"address\": \"Indonesia, BSD\",\n        \"description\": \"Tempat yang menyegarkan\",\n        \"created_at\": \"2024-12-09T10:19:50.342979Z\",\n        \"updated_at\": \"2024-12-09T10:19:50.342979Z\",\n        \"rooms\": []\n    }\n]\n\n ```"
 			},
 			"response": []
 		},
@@ -262,18 +222,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/hotels/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"hotels",
-						"1"
-					]
-				}
+				"url": "http://localhost:8080/hotels/1",
+				"description": "### GET /hotels/1\n\nThis endpoint retrieves information about a specific hotel.\n\n#### Request\n\nNo request body is required for this endpoint.\n\n#### Response\n\n- Status: 200 OK\n    \n- Content-Type: application/json\n    \n\n##### Response Body\n\n``` json\n{\n    \"id\": 1,\n    \"name\": \"Hotel Liliput\",\n    \"address\": \"Indonesia, BSD\",\n    \"description\": \"Tempat yang menyegarkan\",\n    \"created_at\": \"2024-12-08T10:09:39.939054Z\",\n    \"updated_at\": \"2024-12-08T10:09:39.939054Z\",\n    \"rooms\": [\n        {\n            \"id\": 2,\n            \"hotelId\": 1,\n            \"number\": \"A 102\",\n            \"type\": \"Double\",\n            \"price\": 800000,\n            \"created_at\": \"2024-12-08T10:10:03.17437Z\",\n            \"updated_at\": \"2024-12-08T10:10:03.17437Z\"\n        },\n        {\n            \"id\": 3,\n            \"hotelId\": 1,\n            \"number\": \"A 102\",\n            \"type\": \"Double\",\n            \"price\": 800000,\n            \"created_at\": \"2024-12-08T10:10:05.337639Z\",\n            \"updated_at\": \"2024-12-08T10:10:05.337639Z\"\n        },\n        {\n            \"id\": 7,\n            \"hotelId\": 1,\n            \"number\": \"A 102\",\n            \"type\": \"Double\",\n            \"price\": 800000,\n            \"created_at\": \"2024-12-09T10:21:43.109449Z\",\n            \"updated_at\": \"2024-12-09T10:21:43.109449Z\"\n        }\n    ]\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -327,18 +277,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/bookings/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						""
-					]
-				}
+				"url": "http://localhost:8080/bookings/",
+				"description": "### Create a New Booking\n\nThis endpoint allows you to create a new booking by providing the user ID, room ID, check-in date, and check-out date.\n\n**Request Body**\n\n- `userId` (integer): The ID of the user making the booking.\n    \n- `roomId` (integer): The ID of the room being booked.\n    \n- `check_in_date` (string): The date of check-in in the format \"YYYY-MM-DD\".\n    \n- `check_out_date` (string): The date of check-out in the format \"YYYY-MM-DD\".\n    \n\n**Response**  \nThe response for this request follows the JSON schema below:\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"id\": 5,\n  \"userId\": 1,\n  \"roomId\": 3,\n  \"check_in_date\": \"2024-12-10T00:00:00Z\",\n  \"check_out_date\": \"2024-12-15T00:00:00Z\",\n  \"status\": \"pending\",\n  \"created_at\": \"2024-12-09T08:17:25.225084673Z\",\n  \"updated_at\": \"2024-12-09T08:17:25.225084843Z\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n    \"error\": \"Missing required fields\"\n}\nor\n{\n    \"error\": \"Invalid input format\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -347,18 +287,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/bookings/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						""
-					]
-				}
+				"url": "http://localhost:8080/bookings/",
+				"description": "## Get Bookings\n\nThis endpoint retrieves a list of bookings.\n\n### Request\n\n- Method: GET\n    \n- URL: `http://localhost:8080/bookings/`\n    \n\n### Response\n\nThe response will include a list of bookings with details such as booking ID, customer name, booking date, and status.\n\n``` json\n[\n  {\n    \"id\": 2,\n    \"userId\": 1,\n    \"roomId\": 3,\n    \"check_in_date\": \"2024-12-10T00:00:00Z\",\n    \"check_out_date\": \"2024-12-15T00:00:00Z\",\n    \"status\": \"pending\",\n    \"created_at\": \"2024-12-08T10:28:40.666953Z\",\n    \"updated_at\": \"2024-12-08T10:28:40.666953Z\"\n  },\n  {\n    \"id\": 3,\n    \"userId\": 1,\n    \"roomId\": 2,\n    \"check_in_date\": \"2024-12-10T00:00:00Z\",\n    \"check_out_date\": \"2024-12-15T00:00:00Z\",\n    \"status\": \"pending\",\n    \"created_at\": \"2024-12-08T11:05:35.026627Z\",\n    \"updated_at\": \"2024-12-08T11:05:35.026628Z\"\n  },\n  {\n    \"id\": 4,\n    \"userId\": 1,\n    \"roomId\": 3,\n    \"check_in_date\": \"2024-12-10T00:00:00Z\",\n    \"check_out_date\": \"2024-12-15T00:00:00Z\",\n    \"status\": \"pending\",\n    \"created_at\": \"2024-12-08T11:42:01.806126Z\",\n    \"updated_at\": \"2024-12-08T11:42:01.806126Z\"\n  },\n  {\n    \"id\": 5,\n    \"userId\": 1,\n    \"roomId\": 3,\n    \"check_in_date\": \"2024-12-10T00:00:00Z\",\n    \"check_out_date\": \"2024-12-15T00:00:00Z\",\n    \"status\": \"pending\",\n    \"created_at\": \"2024-12-09T08:17:25.225084Z\",\n    \"updated_at\": \"2024-12-09T08:17:25.225084Z\"\n  }\n]\n\n ```"
 			},
 			"response": []
 		},
@@ -376,18 +306,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/bookings/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"1"
-					]
-				}
+				"url": "http://localhost:8080/bookings/1",
+				"description": "### Update Booking Status\n\nThis endpoint is used to update the status of a booking.\n\n#### Request\n\n- Method: PATCH\n    \n- URL: `http://localhost:8080/bookings/1`\n    \n- Headers:\n    \n    - Content-Type: application/json\n        \n- { \"status\": \"confirm\"}\n    \n\n#### Response\n\nThe response of this request is a JSON schema representing the updated booking status.\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"booking\": {\n    \"id\": 3,\n    \"userId\": 1,\n    \"roomId\": 2,\n    \"check_in_date\": \"2024-12-10T00:00:00Z\",\n    \"check_out_date\": \"2024-12-15T00:00:00Z\",\n    \"status\": \"confirm\",\n    \"created_at\": \"2024-12-08T11:05:35.026627Z\",\n    \"updated_at\": \"2024-12-09T08:23:18.814176504Z\"\n  },\n  \"message\": \"Booking updated successfully\"\n}\n\n ```\n\n_Response (404 - Not Found)_\n\n``` json\n{\n  \"error\": \"Booking not found\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"error\": \"Invalid input\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -396,18 +316,8 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/bookings/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"1"
-					]
-				}
+				"url": "http://localhost:8080/bookings/1",
+				"description": "### Delete Booking\n\nThis endpoint is used to delete a specific booking by providing the booking ID in the URL.\n\n#### Request Body\n\nThis request does not require a request body.\n\n#### Response\n\nThe response will not contain a response body. The status code will indicate the success or failure of the deletion operation.\n\nRequest:\n\n- body: Body - raw - JSON\n    \n\n``` json\n{\n  \"status\": \"confirm\"\n}\n\n ```\n\n_Response (200 - Created)_\n\n``` json\n{\n  \"message\": \"Booking deleted successfully\"\n}\n\n ```\n\n_Response (404 - Not Found)_\n\n``` json\n{\n  \"error\": \"Booking not found\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -425,19 +335,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/bookings/payments/3",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"payments",
-						"3"
-					]
-				}
+				"url": "http://localhost:8080/bookings/payments/3",
+				"description": "### Create Payment for Booking\n\nThis endpoint is used to create a payment for a specific booking.\n\n**Request Body**\n\n- `amount`: (number) The amount of the payment.\n    \n- `method`: (string) The payment method used.\n    \n\n**Response**  \nThe response will include the details of the created payment.\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"client_secret\": \"pi_3QU2LbAEeIeJxDdv0TkI6n2a_secret_qmzq7GBtYVT6YqE9eEiO5npRT\",\n  \"message\": \"Payment initiated\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n    \"error\": \"Missing required fields\"\n}\nor\n{\n    \"error\": \"Invalid input format\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -446,18 +345,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/bookings/payments",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"payments"
-					]
-				}
+				"url": "http://localhost:8080/bookings/payments",
+				"description": "### Get Booking Payments\n\nThis endpoint is used to retrieve the payments related to bookings.\n\n#### Request Body\n\nThis request does not require a request body.\n\n#### Response\n\n- `payments`: An array of payment objects containing details such as payment ID, amount, payment status, and timestamp.\n    \n    - `payment ID`: The unique identifier for the payment.\n        \n    - `amount`: The amount of the payment.\n        \n    - `payment status`: The status of the payment (e.g. pending, completed).\n        \n    - `timestamp`: The timestamp of the payment.\n        \n\n_Response (200 - OK)_\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"bookingId\": 2,\n    \"amount\": 800000,\n    \"payment_method\": \"card\",\n    \"status\": \"pending\",\n    \"payment_date\": \"2024-12-08T11:07:33.120104Z\"\n  },\n  {\n    \"id\": 2,\n    \"bookingId\": 3,\n    \"amount\": 800000,\n    \"payment_method\": \"card\",\n    \"status\": \"pending\",\n    \"payment_date\": \"2024-12-08T11:50:08.025181Z\"\n  },\n  {\n    \"id\": 3,\n    \"bookingId\": 3,\n    \"amount\": 800000,\n    \"payment_method\": \"card\",\n    \"status\": \"pending\",\n    \"payment_date\": \"2024-12-09T08:29:47.967727Z\"\n  },\n  {\n    \"id\": 4,\n    \"bookingId\": 3,\n    \"amount\": 800000,\n    \"payment_method\": \"card\",\n    \"status\": \"pending\",\n    \"payment_date\": \"2024-12-09T08:30:17.14246Z\"\n  }\n]\n\n ```"
 			},
 			"response": []
 		},
@@ -511,18 +400,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/bookings/refunds",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"refunds"
-					]
-				}
+				"url": "http://localhost:8080/bookings/refunds",
+				"description": "### Create Booking Refund\n\nThis endpoint allows the user to initiate a refund for a specific booking.\n\n#### Request Body\n\n- `bookingId` (integer): The ID of the booking for which the refund is being requested.\n    \n- `reason` (string): The reason for the refund request.\n    \n\n#### Response\n\nThe response of this request is a JSON object conforming to the following schema:\n\n_Response (201 - Created)_\n\n``` json\n{\n  \"message\": \"Refund requested\",\n  \"refund\": {\n    \"id\": 2,\n    \"bookingId\": 4,\n    \"amount\": 100,\n    \"reason\": \"Customer requested cancellation\",\n    \"status\": \"pending\",\n    \"request_date\": \"2024-12-09T08:31:57.680550929Z\"\n  }\n}\n\n ```\n\n_Response (404 - Not Found)_\n\n``` json\n{\n  \"error\": \"Booking not found\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"error\": \"Invalid input\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -531,18 +410,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/bookings/refunds",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"refunds"
-					]
-				}
+				"url": "http://localhost:8080/bookings/refunds",
+				"description": "### GET /bookings/refunds\n\nThis endpoint retrieves the refunds related to bookings.\n\n#### Request\n\nNo request body is required for this endpoint.\n\n#### Response\n\nThe response will be a JSON object following the schema below:\n\n_Response (200 - OK)_\n\n``` json\n[\n  {\n    \"id\": 1,\n    \"bookingId\": 4,\n    \"amount\": 100,\n    \"reason\": \"Customer requested cancellation\",\n    \"status\": \"approved\",\n    \"request_date\": \"2024-12-08T11:42:12.720786Z\",\n    \"approved_date\": \"2024-12-08T11:46:14.903125Z\"\n  },\n  {\n    \"id\": 2,\n    \"bookingId\": 4,\n    \"amount\": 100,\n    \"reason\": \"Customer requested cancellation\",\n    \"status\": \"pending\",\n    \"request_date\": \"2024-12-09T08:31:57.68055Z\"\n  }\n]\n\n ```\n\nThe response will contain an array of refunds, where each refund object will have an 'id', 'amount', 'reason', and 'status' field."
 			},
 			"response": []
 		},
@@ -560,19 +429,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/bookings/refunds/1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"bookings",
-						"refunds",
-						"1"
-					]
-				}
+				"url": "http://localhost:8080/bookings/refunds/1",
+				"description": "### PATCH /bookings/refunds/1\n\nThis endpoint is used to update the status of a refund for a booking.\n\n#### Request Body\n\n- `status` (string, required): The new status of the refund.\n    \n\n#### Response\n\nThe response for this request will be a JSON object following the schema below:\n\n_Response (200 - Created)_\n\n``` json\n{\n  \"message\": \"Refund status updated\",\n  \"refund\": {\n    \"id\": 1,\n    \"bookingId\": 4,\n    \"amount\": 100,\n    \"reason\": \"Customer requested cancellation\",\n    \"status\": \"approved\",\n    \"request_date\": \"2024-12-08T11:42:12.720786Z\",\n    \"approved_date\": \"2024-12-09T08:35:54.784986728Z\"\n  }\n}\n\n ```\n\n_Response (404 - Not Found)_\n\n``` json\n{\n  \"error\": \"Refunds not found\"\n}\n\n ```\n\n_Response (400 - Bad Request)_\n\n``` json\n{\n  \"error\": \"Invalid input\"\n}\n\n ```"
 			},
 			"response": []
 		},
@@ -590,17 +448,8 @@
 						}
 					}
 				},
-				"url": {
-					"raw": "http://localhost:8080/notifications",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"notifications"
-					]
-				}
+				"url": "http://localhost:8080/notifications",
+				"description": "The `POST /notifications` endpoint is used to send notifications to users. The request should include the `userId`, `type`, `message`, and `is_read` parameters in the request body.\n\n### Request Body\n\n- `userId` (number): The ID of the user to whom the notification will be sent.\n    \n- `type` (string): The type of notification (e.g., email, SMS).\n    \n- `message` (string): The content of the notification message.\n    \n- `is_read` (boolean): Indicates whether the notification has been read by the user.\n    \n\n### Response (JSON Schema)\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"notificationId\": {\n      \"type\": \"number\"\n    },\n    \"userId\": {\n      \"type\": \"number\"\n    },\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"message\": {\n      \"type\": \"string\"\n    },\n    \"timestamp\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n    }\n  }\n}\n\n ```"
 			},
 			"response": []
 		}
