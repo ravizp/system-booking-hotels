@@ -10,3 +10,6 @@ type Notification struct {
 	IsRead    bool      `json:"is_read" gorm:"default:false"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 }
+
+var test string= "asaasas"
+	log.Print(test)

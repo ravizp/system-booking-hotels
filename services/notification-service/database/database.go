@@ -1,6 +1,8 @@
 package database
 
 import (
+	"log"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
@@ -15,5 +17,8 @@ func Connect() error {
 	if err != nil {
 		return err
 	}
+
+	var test string = "asaasas"
+	log.Print(test)
 	return nil
 }
